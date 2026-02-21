@@ -1,14 +1,15 @@
-# Step 1: Eclipse Temurin image of java supposed to be more efficient
-FROM eclipse-temurin:11-jre-ubi9-minimal
+FROM maven:3.9-eclipse-temurin-21
 
-# Step 2: Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy the Spring Boot JAR file into the container
-COPY target/my-spring-boot-app.jar /app/my-spring-boot-app.jar
+COPY .mvn/ .mvn/
+COPY mvnw mvnw
+COPY pom.xml pom.xml
+COPY mvnw.cmd mvnw.cmd
+COPY src ./src
 
-# Step 4: Expose the port your application runs on
+RUN mvn dependency:go-offline
+
 EXPOSE 8080
 
-# Step 5: Define the command to run your Spring Boot application
-CMD ["java", "-jar", "/app/my-spring-boot-app.jar"]
+CMD ["mvn", "spring-boot:run"]

@@ -16,7 +16,7 @@ public class DigiV2Application {
 
 	@GetMapping("/")
 	public String home() {
-		return "OK";
+		return "OK à jour";
 	}
 
 }

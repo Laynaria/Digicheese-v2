@@ -13,6 +13,9 @@ services:
 
   backend:
     build: ./backend
-    command: ["java", "-jar", "/app/my-spring-boot-app.jar"]
+    command: ["mvn", "spring-boot:run"]
     ports:
       - 8080:8080
+    volumes:
+      - ./backend/src/:/app/src/:rw
+      - ./backend/pom.xml:/app/pom.xml
