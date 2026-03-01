@@ -1,7 +1,6 @@
 services:
   frontend:
     build: ./frontend
-    command: npm run dev -- --host 0.0.0.0
     # env_file:
     #   - fileName
     ports:
@@ -13,7 +12,6 @@ services:
 
   backend:
     build: ./backend
-    command: ["mvn", "spring-boot:run"]
     ports:
       - 8080:8080
     volumes:

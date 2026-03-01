@@ -13,4 +13,4 @@ COPY src src
 COPY public public
 COPY index.html index.html
 
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "--host"]
