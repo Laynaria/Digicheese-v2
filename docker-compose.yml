@@ -14,9 +14,17 @@ services:
     build: ./backend
     ports:
       - 8080:8080
+    env_file:
+      - .env
+    environment:
+      HOME: /root
+      DB_NAME: ${DB_NAME:-digicheese}
+      DB_USER: ${DB_USER:-digicheese}
+      DB_PASSWORD: ${DB_PASSWORD:-digicheese}  
     volumes:
       - ./backend/src/:/app/src/:rw
       - ./backend/pom.xml:/app/pom.xml
+      - maven_cache:/root/.m2
     depends_on:
       db:
         condition: service_healthy
@@ -47,3 +55,6 @@ services:
     image: adminer
     ports:
       - 8081:8080
+
+volumes:
+  maven_cache:
