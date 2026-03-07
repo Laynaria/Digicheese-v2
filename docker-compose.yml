@@ -20,9 +20,15 @@ services:
       HOME: /root
       DB_NAME: ${DB_NAME:-digicheese}
       DB_USER: ${DB_USER:-digicheese}
-      DB_PASSWORD: ${DB_PASSWORD:-digicheese}  
+      DB_PASSWORD: ${DB_PASSWORD:-digicheese}
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/src
+          target: /app/src
+        - action: rebuild
+          path: ./backend/pom.xml
     volumes:
-      - ./backend/src/:/app/src/:rw
       - ./backend/pom.xml:/app/pom.xml
       - maven_cache:/root/.m2
     depends_on:
