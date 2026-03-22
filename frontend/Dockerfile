@@ -7,6 +7,7 @@ COPY pack*.json ./
 COPY tsconfig*.json ./
 COPY eslint.config.js eslint.config.js
 COPY vite.config.ts vite.config.ts
+COPY .env .env
 
 RUN npm i
 COPY src src
