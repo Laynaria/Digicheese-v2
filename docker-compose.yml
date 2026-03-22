@@ -1,10 +1,8 @@
 services:
   frontend:
     build: ./frontend
-    env_file:
-      - .env
-    environment:
-      - VITE_API_URL=http://backend:8080
+    # env_file:
+    #   - fileName
     ports:
       - 5173:5173
     volumes:
