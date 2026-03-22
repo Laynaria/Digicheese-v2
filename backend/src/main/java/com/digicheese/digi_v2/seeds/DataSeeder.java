@@ -1,4 +1,4 @@
-package com.digicheese.digi_v2.seeder;
+package com.digicheese.digi_v2.seeds;
 
 import com.digicheese.digi_v2.models.User;
 import com.digicheese.digi_v2.repositories.UserRepository;
