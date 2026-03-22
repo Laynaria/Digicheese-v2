@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { userSchema } from '@/schemas/user.schema'
 import type { User, CreateUserInput } from '@/schemas/user.schema'
 
-const BASE = '/api'
+const BASE = import.meta.env.VITE_API_URL
 
 export async function fetchUsers(): Promise<User[]> {
     const res = await fetch(`${BASE}/users`)
