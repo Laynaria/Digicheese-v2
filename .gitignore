@@ -1,5 +1,8 @@
 # env
 .env
 
-#dbData
+# dbData
 dbData
+
+# idea
+.idea/*
