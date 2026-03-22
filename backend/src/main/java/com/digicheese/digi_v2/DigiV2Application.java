@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @SpringBootApplication
-@RestController
 public class DigiV2Application {
 
 
@@ -15,9 +14,5 @@ public class DigiV2Application {
 		SpringApplication.run(DigiV2Application.class, args);
 	}
 
-	@GetMapping("/")
-	public String home() {
-		return "OK à jour";
-	}
 
 }
