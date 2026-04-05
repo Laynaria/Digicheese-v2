@@ -31,3 +31,7 @@ When the project is already built, and doesn't need a rebuilt, use this instead:
 ```bash
 docker-compose up --watch
 ```
+
+### 4. Documentation
+
+For some addiotionnal auto-generated documentation and easier Api testing, we decided to use [Swagger UI](http://localhost:8080/swagger-ui/index.html).
