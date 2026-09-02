@@ -21,6 +21,8 @@ services:
       DB_NAME: ${DB_NAME:-digicheese}
       DB_USER: ${DB_USER:-digicheese}
       DB_PASSWORD: ${DB_PASSWORD:-digicheese}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
     develop:
       watch:
         - action: sync+restart
