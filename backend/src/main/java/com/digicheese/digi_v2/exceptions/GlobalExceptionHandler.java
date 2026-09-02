@@ -83,8 +83,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponseDTO> handleNotFound(NoResourceFoundException exception,
-                                                           HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseDTO> handleNotFound(HttpServletRequest request) {
         logger.warn("Ressource introuvable : {}", request.getRequestURI());
         return build(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND, request);
     }
