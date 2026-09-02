@@ -20,13 +20,19 @@ public class SecurityConfiguration {
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
     private final List<String> allowedOrigins;
 
     public SecurityConfiguration(AuthenticationProvider authenticationProvider,
                                  JwtAuthenticationFilter jwtAuthenticationFilter,
+                                 JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                                 RestAccessDeniedHandler restAccessDeniedHandler,
                                  @Value("${security.cors.allowed-origins}") List<String> allowedOrigins) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.restAccessDeniedHandler = restAccessDeniedHandler;
         this.allowedOrigins = allowedOrigins;
     }
 
@@ -37,9 +43,13 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
