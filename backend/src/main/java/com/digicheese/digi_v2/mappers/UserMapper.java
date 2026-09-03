@@ -20,7 +20,6 @@ public class UserMapper {
         user.setFirstname(dto.getFirstname());
         user.setLastname(dto.getLastname());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
         return user;
     }
 }

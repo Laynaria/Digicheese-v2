@@ -3,6 +3,8 @@ package com.digicheese.digi_v2.services;
 import com.digicheese.digi_v2.dtos.UserCreateDTO;
 import com.digicheese.digi_v2.dtos.UserDTO;
 import com.digicheese.digi_v2.dtos.UserUpdateDTO;
+import com.digicheese.digi_v2.exceptions.DuplicateResourceException;
+import com.digicheese.digi_v2.exceptions.ResourceNotFoundException;
 import com.digicheese.digi_v2.mappers.UserMapper;
 import com.digicheese.digi_v2.models.User;
 import com.digicheese.digi_v2.repositories.UserRepository;
@@ -33,14 +35,14 @@ public class UserService {
 
     public UserDTO getById(Integer id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         return UserMapper.toDTO(user);
     }
 
     public UserDTO getByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
         return UserMapper.toDTO(user);
     }
@@ -54,7 +56,7 @@ public class UserService {
 
     public UserDTO updateUser(Integer id, UserUpdateDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         if (dto.getFirstname() != null && !dto.getFirstname().trim().isEmpty()) {
             user.setFirstname(dto.getFirstname().trim());
@@ -70,7 +72,7 @@ public class UserService {
             userRepository.findByEmail(normalizedEmail)
                     .ifPresent(existingUser -> {
                         if (!existingUser.getId().equals(user.getId())) {
-                            throw new RuntimeException("Email already used by another user: " + normalizedEmail);
+                            throw new DuplicateResourceException("Email already used by another user: " + normalizedEmail);
                         }
                     });
 
@@ -87,7 +89,7 @@ public class UserService {
 
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         userRepository.delete(user);
     }

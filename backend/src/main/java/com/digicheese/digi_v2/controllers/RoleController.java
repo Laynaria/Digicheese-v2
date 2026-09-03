@@ -4,6 +4,7 @@ import com.digicheese.digi_v2.dtos.RoleCreateDTO;
 import com.digicheese.digi_v2.dtos.RoleDTO;
 import com.digicheese.digi_v2.dtos.RoleUpdateDTO;
 import com.digicheese.digi_v2.services.RoleService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,12 +36,12 @@ public class RoleController {
     }
 
     @PostMapping
-    public RoleDTO createRole(@RequestBody RoleCreateDTO dto) {
+    public RoleDTO createRole(@Valid @RequestBody RoleCreateDTO dto) {
         return roleService.createRole(dto);
     }
 
     @PatchMapping("/{id}")
-    public RoleDTO updateRole(@PathVariable Integer id, @RequestBody RoleUpdateDTO dto) {
+    public RoleDTO updateRole(@PathVariable Integer id, @Valid @RequestBody RoleUpdateDTO dto) {
         return roleService.updateRole(id, dto);
     }
 
