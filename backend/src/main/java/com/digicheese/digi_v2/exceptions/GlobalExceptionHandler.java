@@ -12,7 +12,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -32,6 +35,7 @@ public class GlobalExceptionHandler {
     private static final String ACCESS_DENIED = "Acces refuse";
     private static final String RESOURCE_NOT_FOUND = "Ressource introuvable";
     private static final String INVALID_REQUEST = "Requete invalide";
+    private static final String RESOURCE_CONFLICT = "Cette valeur est deja utilisee";
     private static final String INTERNAL_ERROR = "Une erreur interne est survenue";
 
     @ExceptionHandler(ExpiredJwtException.class)
@@ -80,6 +84,33 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(
                 Instant.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 INVALID_REQUEST, request.getRequestURI(), fieldErrors));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleResourceNotFound(ResourceNotFoundException exception,
+                                                                   HttpServletRequest request) {
+        logger.warn("Ressource introuvable sur {} : {}", request.getRequestURI(), exception.getMessage());
+        return build(HttpStatus.NOT_FOUND, RESOURCE_NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDuplicateResource(DuplicateResourceException exception,
+                                                                    HttpServletRequest request) {
+        logger.warn("Conflit de ressource sur {} : {}", request.getRequestURI(), exception.getMessage());
+        return build(HttpStatus.CONFLICT, RESOURCE_CONFLICT, request);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnreadableBody(HttpMessageNotReadableException exception,
+                                                                 HttpServletRequest request) {
+        logger.warn("Corps de requete illisible sur {} : {}", request.getRequestURI(), exception.getMessage());
+        return build(HttpStatus.BAD_REQUEST, INVALID_REQUEST, request);
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponseDTO> handleInvalidParameter(Exception exception, HttpServletRequest request) {
+        logger.warn("Parametre de requete invalide sur {} : {}", request.getRequestURI(), exception.getMessage());
+        return build(HttpStatus.BAD_REQUEST, INVALID_REQUEST, request);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

@@ -4,6 +4,7 @@ import com.digicheese.digi_v2.dtos.UserCreateDTO;
 import com.digicheese.digi_v2.dtos.UserDTO;
 import com.digicheese.digi_v2.dtos.UserUpdateDTO;
 import com.digicheese.digi_v2.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,12 +36,12 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDTO createUser(@RequestBody UserCreateDTO dto) {
+    public UserDTO createUser(@Valid @RequestBody UserCreateDTO dto) {
         return userService.createUser(dto);
     }
 
     @PatchMapping("/{id}")
-    public UserDTO updateUser(@PathVariable Integer id, @RequestBody UserUpdateDTO dto) {
+    public UserDTO updateUser(@PathVariable Integer id, @Valid @RequestBody UserUpdateDTO dto) {
         return userService.updateUser(id, dto);
     }
 

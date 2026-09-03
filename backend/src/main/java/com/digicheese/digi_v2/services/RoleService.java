@@ -3,6 +3,8 @@ package com.digicheese.digi_v2.services;
 import com.digicheese.digi_v2.dtos.RoleCreateDTO;
 import com.digicheese.digi_v2.dtos.RoleDTO;
 import com.digicheese.digi_v2.dtos.RoleUpdateDTO;
+import com.digicheese.digi_v2.exceptions.DuplicateResourceException;
+import com.digicheese.digi_v2.exceptions.ResourceNotFoundException;
 import com.digicheese.digi_v2.mappers.RoleMapper;
 import com.digicheese.digi_v2.models.Role;
 import com.digicheese.digi_v2.models.User;
@@ -27,14 +29,10 @@ public class RoleService {
     }
 
     public RoleDTO createRole(RoleCreateDTO dto) {
-        if (dto == null || dto.getRoleLabel() == null || dto.getRoleLabel().trim().isEmpty()) {
-            throw new RuntimeException("Role label is required");
-        }
-
         String normalizedRoleLabel = dto.getRoleLabel().trim();
 
         if (roleRepository.existsByRoleLabel(normalizedRoleLabel)) {
-            throw new RuntimeException("Role already exists with label: " + normalizedRoleLabel);
+            throw new DuplicateResourceException("Role already exists with label: " + normalizedRoleLabel);
         }
 
         Role role = RoleMapper.toEntity(dto);
@@ -54,27 +52,23 @@ public class RoleService {
 
     public RoleDTO getById(Integer id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
 
         return RoleMapper.toDTO(role);
     }
 
     public RoleDTO getByRoleLabel(String roleLabel) {
-        if (roleLabel == null || roleLabel.trim().isEmpty()) {
-            throw new RuntimeException("Role label is required");
-        }
-
         String normalizedRoleLabel = roleLabel.trim();
 
         Role role = roleRepository.findByRoleLabel(normalizedRoleLabel)
-                .orElseThrow(() -> new RuntimeException("Role not found with label: " + normalizedRoleLabel));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with label: " + normalizedRoleLabel));
 
         return RoleMapper.toDTO(role);
     }
 
     public RoleDTO updateRole(Integer id, RoleUpdateDTO dto) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
 
         if (dto.getRoleLabel() != null && !dto.getRoleLabel().trim().isEmpty()) {
             String normalizedRoleLabel = dto.getRoleLabel().trim();
@@ -82,7 +76,7 @@ public class RoleService {
             roleRepository.findByRoleLabel(normalizedRoleLabel)
                     .ifPresent(existingRole -> {
                         if (!existingRole.getId().equals(role.getId())) {
-                            throw new RuntimeException("Role already exists with label: " + normalizedRoleLabel);
+                            throw new DuplicateResourceException("Role already exists with label: " + normalizedRoleLabel);
                         }
                     });
 
@@ -96,7 +90,7 @@ public class RoleService {
     @Transactional
     public void deleteRole(Integer id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
 
         Set<User> users = new HashSet<>(role.getUsers());
 
