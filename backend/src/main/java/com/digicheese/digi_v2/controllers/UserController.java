@@ -2,11 +2,12 @@ package com.digicheese.digi_v2.controllers;
 
 import com.digicheese.digi_v2.dtos.UserCreateDTO;
 import com.digicheese.digi_v2.dtos.UserDTO;
+import com.digicheese.digi_v2.dtos.UserUpdateDTO;
 import com.digicheese.digi_v2.services.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/users")
@@ -16,6 +17,16 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public List<UserDTO> getUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{id}")
+    public UserDTO getById(@PathVariable Integer id) {
+        return userService.getById(id);
     }
 
     @GetMapping("/by-email")
@@ -28,8 +39,14 @@ public class UserController {
         return userService.createUser(dto);
     }
 
-    @GetMapping
-    public List<UserDTO> getUsers() {
-        return userService.getAllUsers();
+    @PatchMapping("/{id}")
+    public UserDTO updateUser(@PathVariable Integer id, @RequestBody UserUpdateDTO dto) {
+        return userService.updateUser(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
