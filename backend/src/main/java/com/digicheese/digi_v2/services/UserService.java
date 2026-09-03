@@ -6,6 +6,7 @@ import com.digicheese.digi_v2.dtos.UserUpdateDTO;
 import com.digicheese.digi_v2.mappers.UserMapper;
 import com.digicheese.digi_v2.models.User;
 import com.digicheese.digi_v2.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,13 +15,18 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDTO createUser(UserCreateDTO dto) {
         User user = UserMapper.toEntity(dto);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
         User saved = userRepository.save(user);
         return UserMapper.toDTO(saved);
     }
@@ -71,8 +77,8 @@ public class UserService {
             user.setEmail(normalizedEmail);
         }
 
-        if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
-            user.setPassword(dto.getPassword().trim());
+       if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword().trim()));
         }
 
         User updated = userRepository.save(user);
